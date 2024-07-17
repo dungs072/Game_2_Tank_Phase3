@@ -6,6 +6,7 @@ import MainGameUI from '../ui/MainGameUI'
 import GameOverUI from '../ui/GameOverUI'
 import CONST from '../const'
 import PopupOverUI from '../ui/PopupOverUI'
+import ScoreCalculator from '../score/ScoreCalculator'
 
 export class GameScene extends Phaser.Scene {
     private map: Phaser.Tilemaps.Tilemap
@@ -19,7 +20,7 @@ export class GameScene extends Phaser.Scene {
     private mainGameUI: MainGameUI
     private popupOverUI: PopupOverUI
 
-    private target: Phaser.Math.Vector2
+    private scoreCalculator: ScoreCalculator
 
     private cursorImage: Phaser.GameObjects.Image
 
@@ -28,13 +29,21 @@ export class GameScene extends Phaser.Scene {
             key: 'GameScene',
         })
     }
+    private registerEvents(): void {
+        ScoreCalculator.eventEmitter.on(CONST.SCORE.EVENTS.SCORE_ADDED, (currentScore: number) => {
+            this.mainGameUI.setScoreText('SCORE: ' + currentScore.toString())
+        })
+    }
 
     init(): void {}
 
     create(): void {
         this.fadeIn()
         this.events.on('resume', this.handleResume, this)
+
         this.createUI()
+        this.registerEvents()
+        this.scoreCalculator = new ScoreCalculator()
         // set cursor
         this.game.canvas.style.cursor = 'none'
         this.map = this.make.tilemap({ key: 'levelMap' })
@@ -76,6 +85,9 @@ export class GameScene extends Phaser.Scene {
 
         this.enemies.getChildren().forEach((enemyObject: Phaser.GameObjects.GameObject) => {
             const enemy = enemyObject as Enemy
+            enemy.on(CONST.ENEMEY.EVENTS.ENEMY_DIE, (amount: number) => {
+                this.scoreCalculator.addCurrentScore(amount)
+            })
             this.physics.add.overlap(
                 this.player.getBullets(),
                 enemy,
@@ -122,21 +134,19 @@ export class GameScene extends Phaser.Scene {
     private createUI(): void {
         this.mainGameUI = new MainGameUI(this)
         this.popupOverUI = new PopupOverUI(this)
+
         Player.eventEmitter.on(CONST.PLAYER.EVENTS.PLAYER_DIE, () => {
+            this.scoreCalculator.saveHighScore()
             this.mainGameUI.toggleUI(false, true)
             this.popupOverUI.toggleUI(true)
             this.time.delayedCall(2000, () => {
-                // const fx = this.cameras.main.postFX.addWipe(0.3, 1, 1)
-
-                // this.scene.transition({
-                //     target: 'OverScene',
-                //     duration: 1000,
-                //     moveBelow: true,
-                //     onUpdate: (progress: number) => {
-                //         fx.progress = progress
-                //     },
-                // })
-                this.scene.start('OverScene')
+                this.cameras.main.fadeOut(1000, 0, 0, 0)
+            })
+        })
+        this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+            this.scene.start('OverScene', {
+                currentScore: this.scoreCalculator.getCurrentScore(),
+                highScore: this.scoreCalculator.getHighScore(),
             })
         })
     }
@@ -205,6 +215,7 @@ export class GameScene extends Phaser.Scene {
         if (bullet instanceof Bullet) {
             bullet.playExplosion()
             bullet.destroy()
+            //this.sound.play('explosionsound')
         }
     }
 

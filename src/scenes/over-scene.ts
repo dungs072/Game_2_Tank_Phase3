@@ -7,9 +7,11 @@ class OverScene extends Phaser.Scene {
             key: 'OverScene',
         })
     }
-    create(): void {
+    create(data: { currentScore: number; highScore: number }): void {
         this.fadeIn()
         this.overUI = new GameOverUI(this)
+        this.overUI.setCurrentScoreText('YOUR SCORE: ' + data.currentScore.toString())
+        this.overUI.setHighScoreText('HIGH SCORE: ' + data.highScore.toString())
     }
     private fadeIn() {
         this.cameras.main.fadeIn(1000, 0, 0, 0)

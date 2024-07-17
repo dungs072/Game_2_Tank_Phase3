@@ -12,6 +12,9 @@ export class Player extends Phaser.GameObjects.Container {
     private health: number
     private lastShoot: number
 
+    //sound
+    private moveSound: Phaser.Sound.BaseSound
+
     // children
     private barrel: Phaser.GameObjects.Image
 
@@ -44,6 +47,7 @@ export class Player extends Phaser.GameObjects.Container {
         this.initAnim()
 
         this.initInput()
+        this.initSounds()
 
         this.collider = new Phaser.Physics.Arcade.Image(this.scene, 0, 0, '')
 
@@ -52,6 +56,9 @@ export class Player extends Phaser.GameObjects.Container {
 
         this.setTankScale(0.5)
         this.scene.add.existing(this)
+    }
+    private initSounds(): void {
+        this.moveSound = this.scene.sound.add('trackmove')
     }
     private initInput(): void {
         this.registerInput()
@@ -67,7 +74,7 @@ export class Player extends Phaser.GameObjects.Container {
 
     private initImage() {
         // variables
-        this.health = 0.1
+        this.health = 1
         this.lastShoot = 0
 
         // image
@@ -169,8 +176,14 @@ export class Player extends Phaser.GameObjects.Container {
 
         if (this.rotateKeyLeft?.isDown) {
             this.rotation -= CONST.PLAYER.ROTATION_SPEED * deltaTime
+            if (!this.moveSound.isPlaying) {
+                this.moveSound.play()
+            }
         } else if (this.rotateKeyRight?.isDown) {
             this.rotation += CONST.PLAYER.ROTATION_SPEED * deltaTime
+            if (!this.moveSound.isPlaying) {
+                this.moveSound.play()
+            }
         }
 
         if (this.moveForwardKey?.isDown) {
@@ -179,14 +192,23 @@ export class Player extends Phaser.GameObjects.Container {
                 -CONST.PLAYER.MOVEMENT_SPEED,
                 this.body.velocity
             )
+            if (!this.moveSound.isPlaying) {
+                this.moveSound.play()
+            }
         } else if (this.moveBackwardKey?.isDown) {
             this.scene.physics.velocityFromRotation(
                 this.rotation - Phaser.Math.DEG_TO_RAD * 90,
                 +CONST.PLAYER.MOVEMENT_SPEED,
                 this.body.velocity
             )
+            if (!this.moveSound.isPlaying) {
+                this.moveSound.play()
+            }
         } else {
             this.body.velocity.set(0)
+            if (this.moveSound.isPlaying) {
+                this.moveSound.stop()
+            }
         }
     }
     private handleRotationBarrelByMouse(deltaTime: number): void {
@@ -209,6 +231,7 @@ export class Player extends Phaser.GameObjects.Container {
     }
 
     private handleShooting(): void {
+        if (this.scene.time.now - this.lastShoot < CONST.PLAYER.RELOAD_TIME) return
         this.scene.cameras.main.shake(20, 0.005)
         this.scene.tweens.add({
             targets: this,
@@ -235,8 +258,9 @@ export class Player extends Phaser.GameObjects.Container {
                 })
             )
 
-            this.lastShoot = this.scene.time.now + 80
+            this.lastShoot = this.scene.time.now
         }
+        this.scene.sound.play('shootsound')
         this.flash.play('flash')
     }
 
@@ -264,7 +288,8 @@ export class Player extends Phaser.GameObjects.Container {
         if (this.health > 0) {
             this.health -= 0.05
             MainGameUI.eventEmitter.emit(CONST.UI.EVENTS.HEALTH_BAR_CHANGE, this.health)
-        } else {
+        }
+        if (this.health <= 0) {
             this.health = 0
             Player.eventEmitter.emit(CONST.PLAYER.EVENTS.PLAYER_DIE)
             this.active = false

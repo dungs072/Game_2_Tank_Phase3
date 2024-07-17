@@ -5,6 +5,7 @@ export class Bullet extends Phaser.GameObjects.Image {
 
     private bulletSpeed: number
     private explosion: Phaser.GameObjects.Sprite
+    private explosionSound: Phaser.Sound.BaseSound
 
     constructor(aParams: IBulletConstructor) {
         super(aParams.scene, aParams.x, aParams.y, aParams.texture)
@@ -12,7 +13,11 @@ export class Bullet extends Phaser.GameObjects.Image {
         this.rotation = aParams.rotation
         this.initImage()
         this.initSprite()
+        this.initSounds()
         this.scene.add.existing(this)
+    }
+    private initSounds(): void {
+        this.explosionSound = this.scene.sound.add('explosionsound')
     }
 
     private initImage(): void {
@@ -49,9 +54,31 @@ export class Bullet extends Phaser.GameObjects.Image {
             this
         )
     }
+    private updateSoundDistance(): void {
+        if (!this.scene) return
+        const distance = Phaser.Math.Distance.Between(
+            this.scene.cameras.main.midPoint.x,
+            this.scene.cameras.main.midPoint.y,
+            this.x,
+            this.y
+        )
+
+        const maxDistance = 800
+
+        const volume = Phaser.Math.Clamp(1 - distance / maxDistance, 0, 1)
+
+        if (this.explosionSound instanceof Phaser.Sound.WebAudioSound) {
+            this.explosionSound.setVolume(volume)
+        } else if (this.explosionSound instanceof Phaser.Sound.HTML5AudioSound) {
+            this.explosionSound.setVolume(volume)
+        }
+    }
     public playExplosion(): void {
         this.explosion.setPosition(this.x, this.y)
         this.explosion.play('explosion')
+        this.updateSoundDistance()
+        this.explosionSound.play()
+
         this.setVisible(false)
         this.explosion.setVisible(true)
     }

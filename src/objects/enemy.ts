@@ -1,6 +1,7 @@
 import { Bullet } from './bullet'
 import { IImageConstructor } from '../interfaces/image.interface'
 import CONST from '../const'
+import ScoreCalculator from '../score/ScoreCalculator'
 
 export class Enemy extends Phaser.GameObjects.Image {
     body: Phaser.Physics.Arcade.Body
@@ -9,6 +10,10 @@ export class Enemy extends Phaser.GameObjects.Image {
     private health: number
     private lastShoot: number
     private speed: number
+
+    // sound
+
+    private shootSound: Phaser.Sound.BaseSound
 
     // children
     private barrel: Phaser.GameObjects.Image
@@ -29,7 +34,12 @@ export class Enemy extends Phaser.GameObjects.Image {
         super(aParams.scene, aParams.x, aParams.y, aParams.texture, aParams.frame)
 
         this.initContainer()
+        this.initSounds()
+
         this.scene.add.existing(this)
+    }
+    private initSounds(): void {
+        this.shootSound = this.scene.sound.add('shootsound')
     }
 
     private initContainer() {
@@ -75,6 +85,7 @@ export class Enemy extends Phaser.GameObjects.Image {
     }
 
     update(): void {
+        this.updateSoundDistance()
         if (this.active) {
             this.barrel.x = this.x
             this.barrel.y = this.y
@@ -85,6 +96,26 @@ export class Enemy extends Phaser.GameObjects.Image {
             this.destroy()
             this.barrel.destroy()
             this.lifeBar.destroy()
+        }
+    }
+    private updateSoundDistance(): void {
+        const distance = Phaser.Math.Distance.Between(
+            this.scene.cameras.main.midPoint.x,
+            this.scene.cameras.main.midPoint.y,
+            this.x,
+            this.y
+        )
+
+        // Define a maximum distance at which the sound is audible
+        const maxDistance = 800
+
+        // Calculate the volume based on the distance
+        const volume = Phaser.Math.Clamp(1 - distance / maxDistance, 0, 1)
+
+        if (this.shootSound instanceof Phaser.Sound.WebAudioSound) {
+            this.shootSound.setVolume(volume)
+        } else if (this.shootSound instanceof Phaser.Sound.HTML5AudioSound) {
+            this.shootSound.setVolume(volume)
         }
     }
 
@@ -100,7 +131,7 @@ export class Enemy extends Phaser.GameObjects.Image {
                         texture: 'bulletRed',
                     })
                 )
-
+                this.shootSound.play()
                 this.lastShoot = this.scene.time.now + CONST.ENEMEY.SHOOT_PER_TIME
             }
         }
@@ -117,11 +148,13 @@ export class Enemy extends Phaser.GameObjects.Image {
 
     public updateHealth(): void {
         if (this.health > 0) {
-            this.health -= 0.05
+            this.health -= 0.3
             this.redrawLifebar()
-        } else {
+        }
+        if (this.health < 0) {
             this.health = 0
             this.active = false
+            this.emit(CONST.ENEMEY.EVENTS.ENEMY_DIE, CONST.SCORE.SCORE_ADDED_AMOUNT)
         }
     }
 }

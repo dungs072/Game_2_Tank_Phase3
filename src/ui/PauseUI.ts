@@ -161,8 +161,7 @@ class PauseUI extends Phaser.GameObjects.Container {
         })
         this.newGameButton.setMainCallback(() => {
             this.toggleUI(false, false, () => {
-                this.scene.scene.stop('PauseScene')
-                this.scene.scene.start('GameScene')
+                this.scene.cameras.main.fadeOut(1000, 0, 0, 0)
             })
         })
         this.mainMenuButton.setMainCallback(() => {

@@ -30,10 +30,10 @@ class Button extends Phaser.GameObjects.Container {
         this.setInteractive({
             useHandCursor: true,
         })
-        //this.pressSound = this.scene.sound.add('press')
+        this.pressSound = this.scene.sound.add('click')
 
         this.on('pointerdown', () => {
-            //this.pressSound.play()
+            this.pressSound.play()
             if (this.downTween && this.downTween.isPlaying()) return
             this.downTween = this.scene.tweens.add({
                 targets: this,

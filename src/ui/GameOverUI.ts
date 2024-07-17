@@ -136,7 +136,7 @@ class GameOverUI extends Phaser.GameObjects.Container {
 
                 this.scene.scene.transition({
                     target: 'GameScene',
-                    duration: 2000,
+                    duration: 1000,
                     moveBelow: true,
                     onUpdate: (progress: number) => {
                         fx.progress = progress

@@ -1,4 +1,7 @@
+import CONST from '../const'
+
 class ScoreCalculator {
+    public static eventEmitter = new Phaser.Events.EventEmitter()
     private currentScore: number
     private highScore: number
 
@@ -7,9 +10,11 @@ class ScoreCalculator {
     }
     public setCurrentScore(score: number) {
         this.currentScore = score
+        ScoreCalculator.eventEmitter.emit(CONST.SCORE.EVENTS.SCORE_ADDED, this.currentScore)
     }
     public addCurrentScore(score: number) {
         this.currentScore += score
+        ScoreCalculator.eventEmitter.emit(CONST.SCORE.EVENTS.SCORE_ADDED, this.currentScore)
     }
     public getCurrentScore(): number {
         return this.currentScore

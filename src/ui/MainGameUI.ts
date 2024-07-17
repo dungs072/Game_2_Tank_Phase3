@@ -5,22 +5,40 @@ import CONST from '../const'
 class MainGameUI extends Phaser.GameObjects.Container {
     private pauseButton: Button
     private lifeBar: Phaser.GameObjects.Graphics
+    private score: Phaser.GameObjects.Text
+    private currentTextTween: Phaser.Tweens.Tween
     public static eventEmitter: Phaser.Events.EventEmitter = new Phaser.Events.EventEmitter()
     constructor(scene: Scene) {
         super(scene, 0, 0)
+        Phaser.Display.Align.In.Center(
+            this,
+            this.scene.add.zone(
+                0,
+                0,
+                CONST.GAME.MAX_WIDTH - CONST.GAME.MAX_WIDTH / 2,
+                CONST.GAME.MAX_HEIGHT
+            )
+        )
+        this.initText()
         this.initButtons()
         this.initLifeBar()
         this.setDepth(10)
         this.scene.add.existing(this)
 
-        Phaser.Display.Align.In.Center(
-            this,
-            this.scene.add.zone(0, 0, CONST.GAME.MAX_WIDTH, CONST.GAME.MAX_HEIGHT)
-        )
-
         MainGameUI.eventEmitter.on(CONST.UI.EVENTS.HEALTH_BAR_CHANGE, (health: number) => {
             this.redrawLifebar(health)
         })
+    }
+    private initText(): void {
+        this.score = this.scene.add.text(CONST.GAME.MAX_WIDTH * 0.75, 10, 'Score: 100', {
+            fontFamily: 'Arial',
+            color: '#FFFFFF',
+            fontSize: 40,
+            fontStyle: 'bold',
+        })
+        this.score.setOrigin(0, 0)
+        this.score.setScrollFactor(0, 0)
+        this.add(this.score)
     }
     private initLifeBar() {
         this.lifeBar = this.scene.add.graphics()
@@ -77,6 +95,24 @@ class MainGameUI extends Phaser.GameObjects.Container {
                 },
             })
         }
+    }
+    public setScoreText(text: string): void {
+        if (this.currentTextTween && this.currentTextTween.isPlaying()) {
+            this.score.text = text
+        } else {
+            this.currentTextTween = this.scene.add.tween({
+                targets: this.score,
+                scale: 2,
+                ease: 'Linear',
+                duration: 100,
+                repeat: 0,
+                yoyo: true,
+                onComplete: () => {
+                    this.score.text = text
+                },
+            })
+        }
+        this.score.text = text
     }
 }
 export default MainGameUI
