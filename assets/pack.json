@@ -1,0 +1,271 @@
+{
+    "preload": {
+        "files": [
+            {
+                "type": "tilemapTiledJSON",
+                "key": "levelMap",
+                "url": "./assets/maps/levelMap.json"
+            },
+            {
+                "type": "bitmapFont",
+                "key": "font",
+                "textureURL": "./assets/font/font.png",
+                "fontDataURL": "./assets/font/font.fnt"
+            },
+            {
+                "type": "image",
+                "key": "a",
+                "url": "./assets/input/keyboard_a.png"
+            },
+            {
+                "type": "image",
+                "key": "d",
+                "url": "./assets/input/keyboard_d.png"
+            },
+            {
+                "type": "image",
+                "key": "s",
+                "url": "./assets/input/keyboard_s.png"
+            },
+            {
+                "type": "image",
+                "key": "w",
+                "url": "./assets/input/keyboard_w.png"
+            },
+            {
+                "type": "image",
+                "key": "fire",
+                "url": "./assets/input/fire.png"
+            },
+            {
+                "type": "image",
+                "key": "move",
+                "url": "./assets/input/move.png"
+            },
+            {
+                "type": "image",
+                "key": "rotate",
+                "url": "./assets/input/rotate.png"
+            },
+            {
+                "type": "image",
+                "key": "over",
+                "url": "./assets/bg/over.png"
+            },
+            {
+                "type": "image",
+                "key": "overbg",
+                "url": "./assets/bg/overbg.jpg"
+            },
+            {
+                "type": "image",
+                "key": "bluepanel",
+                "url": "./assets/ui/panel3.png"
+            },
+            {
+                "type": "image",
+                "key": "bannerblue",
+                "url": "./assets/ui/banner1.png"
+            },
+            {
+                "type": "image",
+                "key": "bg",
+                "url": "./assets/bg/bg.jpg"
+            },
+            {
+                "type": "image",
+                "key": "audiobutton",
+                "url": "./assets/ui/audiobutton.png"
+            },
+            {
+                "type": "image",
+                "key": "audiooffbutton",
+                "url": "./assets/ui/audiooffbutton.png"
+            },
+            {
+                "type": "image",
+                "key": "closebutton",
+                "url": "./assets/ui/button4.png"
+            },
+            {
+                "type": "image",
+                "key": "greypanel",
+                "url": "./assets/ui/panel2.png"
+            },
+            {
+                "type": "image",
+                "key": "greybutton",
+                "url": "./assets/ui/button3.png"
+            },
+            {
+                "type": "image",
+                "key": "orangebutton2",
+                "url": "./assets/ui/button2.png"
+            },
+            {
+                "type": "image",
+                "key": "orangepanel",
+                "url": "./assets/ui/panel1.png"
+            },
+            {
+                "type": "image",
+                "key": "orangebutton",
+                "url": "./assets/ui/button1.png"
+            },
+
+            {
+                "type": "image",
+                "key": "pause",
+                "url": "./assets/ui/pause.png"
+            },
+
+            {
+                "type": "image",
+                "key": "crosshair",
+                "url": "./assets/crosshair/crosshair.png"
+            },
+            {
+                "type": "image",
+                "key": "arrow",
+                "url": "./assets/sprites/arrow.png"
+            },
+            {
+                "type": "image",
+                "key": "explosion1",
+                "url": "./assets/effects/explosion/explosion1.png"
+            },
+            {
+                "type": "image",
+                "key": "explosion2",
+                "url": "./assets/effects/explosion/explosion2.png"
+            },
+            {
+                "type": "image",
+                "key": "explosion3",
+                "url": "./assets/effects/explosion/explosion3.png"
+            },
+            {
+                "type": "image",
+                "key": "explosion4",
+                "url": "./assets/effects/explosion/explosion4.png"
+            },
+            {
+                "type": "image",
+                "key": "explosion5",
+                "url": "./assets/effects/explosion/explosion5.png"
+            },
+            {
+                "type": "image",
+                "key": "explosion6",
+                "url": "./assets/effects/explosion/explosion6.png"
+            },
+            {
+                "type": "image",
+                "key": "explosion7",
+                "url": "./assets/effects/explosion/explosion7.png"
+            },
+            {
+                "type": "image",
+                "key": "explosion8",
+                "url": "./assets/effects/explosion/explosion8.png"
+            },
+
+            {
+                "type": "image",
+                "key": "flash1",
+                "url": "./assets/effects/flash/flash01.png"
+            },
+            {
+                "type": "image",
+                "key": "flash2",
+                "url": "./assets/effects/flash/flash02.png"
+            },
+            {
+                "type": "image",
+                "key": "flash3",
+                "url": "./assets/effects/flash/flash03.png"
+            },
+            {
+                "type": "image",
+                "key": "hull03",
+                "url": "./assets/sprites/hull_03.png"
+            },
+            {
+                "type": "image",
+                "key": "heavyshell",
+                "url": "./assets/sprites/heavy_shell.png"
+            },
+            {
+                "type": "image",
+                "key": "gun03",
+                "url": "./assets/sprites/gun_03.png"
+            },
+            {
+                "type": "image",
+                "key": "track3",
+                "url": "./assets/sprites/track_3_A.png"
+            },
+            {
+                "type": "image",
+                "key": "tankRed",
+                "url": "./assets/sprites/tank-red.png"
+            },
+            {
+                "type": "image",
+                "key": "barrelRed",
+                "url": "./assets/sprites/barrel-red.png"
+            },
+            {
+                "type": "image",
+                "key": "bulletBlue",
+                "url": "./assets/sprites/bullet-blue.png"
+            },
+            {
+                "type": "image",
+                "key": "bulletRed",
+                "url": "./assets/sprites/bullet-red.png"
+            },
+            {
+                "type": "image",
+                "key": "tiles",
+                "url": "./assets/tiles/tiles.png"
+            },
+            {
+                "type": "image",
+                "key": "barrelGreyTop",
+                "url": "./assets/obstacles/barrel-grey-top.png"
+            },
+            {
+                "type": "image",
+                "key": "barrelGreySideRust",
+                "url": "./assets/obstacles/barrel-grey-side-rust.png"
+            },
+            {
+                "type": "image",
+                "key": "barrelGreySide",
+                "url": "./assets/obstacles/barrel-grey-side.png"
+            },
+            {
+                "type": "image",
+                "key": "barrelRedTop",
+                "url": "./assets/obstacles/barrel-red-top.png"
+            },
+            {
+                "type": "image",
+                "key": "barrelRedSide",
+                "url": "./assets/obstacles/barrel-red-side.png"
+            },
+
+            {
+                "type": "image",
+                "key": "treeSmall",
+                "url": "./assets/obstacles/tree-small.png"
+            },
+            {
+                "type": "image",
+                "key": "treeLarge",
+                "url": "./assets/obstacles/tree-large.png"
+            }
+        ]
+    }
+}
