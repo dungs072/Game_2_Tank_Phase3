@@ -7,6 +7,7 @@ import GameOverUI from '../ui/GameOverUI'
 import CONST from '../const'
 import PopupOverUI from '../ui/PopupOverUI'
 import ScoreCalculator from '../score/ScoreCalculator'
+import SoundManager from '../sound/SoundManager'
 
 export class GameScene extends Phaser.Scene {
     private map: Phaser.Tilemaps.Tilemap
@@ -38,6 +39,7 @@ export class GameScene extends Phaser.Scene {
     init(): void {}
 
     create(): void {
+        this.checkSounds()
         this.fadeIn()
         this.events.on('resume', this.handleResume, this)
 
@@ -65,7 +67,6 @@ export class GameScene extends Phaser.Scene {
         // collider layer and obstacles
         this.physics.add.collider(this.player, this.layer)
         this.physics.add.collider(this.player, this.obstacles)
-
         // collider for bullets
         this.physics.add.collider(
             this.player.getBullets(),
@@ -122,6 +123,12 @@ export class GameScene extends Phaser.Scene {
         this.cursorImage.setScale(1.2)
         this.cursorImage.setDepth(10)
         this.add.existing(this.cursorImage)
+    }
+    private checkSounds(): void {
+        const soundManager = this.plugins.get('SoundManager')
+        if (soundManager instanceof SoundManager) {
+            this.sound.mute = soundManager.getIsMute()
+        }
     }
     private handleResume(): void {
         this.game.canvas.style.cursor = 'none'

@@ -1,6 +1,7 @@
 import { Scene } from 'phaser'
 import Button from './Button'
 import CONST from '../const'
+import SoundManager from '../sound/SoundManager'
 
 class PauseUI extends Phaser.GameObjects.Container {
     private panel: Phaser.GameObjects.Image
@@ -174,7 +175,17 @@ class PauseUI extends Phaser.GameObjects.Container {
         this.soundButton.setMainCallback(() => {
             this.soundState = !this.soundState
             this.soundButton.setBackground(this.soundState ? 'audiobutton' : 'audiooffbutton')
+            const soundManager = this.scene.plugins.get('SoundManager')
+            if (soundManager instanceof SoundManager) {
+                soundManager.setIsMute(!this.soundState)
+                this.scene.sound.mute = !this.soundState
+            }
         })
+    }
+
+    public toggleSound(state: boolean): void {
+        this.soundState = !state
+        this.soundButton.setBackground(this.soundState ? 'audiobutton' : 'audiooffbutton')
     }
 }
 export default PauseUI

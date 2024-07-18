@@ -4,6 +4,7 @@ import { GameScene } from './scenes/game-scene'
 import { MenuScene } from './scenes/menu-scene'
 import OverScene from './scenes/over-scene'
 import PauseScene from './scenes/pause-scene'
+import SoundManager from './sound/SoundManager'
 
 export const GameConfig: Phaser.Types.Core.GameConfig = {
     title: 'Tank',
@@ -28,6 +29,9 @@ export const GameConfig: Phaser.Types.Core.GameConfig = {
     scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
+    },
+    plugins: {
+        global: [{ key: 'SoundManager', plugin: SoundManager, start: true }],
     },
     backgroundColor: '#4974a5',
     render: { antialias: true },

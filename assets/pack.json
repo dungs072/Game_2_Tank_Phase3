@@ -14,6 +14,41 @@
             },
             {
                 "type": "image",
+                "key": "a",
+                "url": "./assets/input/keyboard_a.png"
+            },
+            {
+                "type": "image",
+                "key": "d",
+                "url": "./assets/input/keyboard_d.png"
+            },
+            {
+                "type": "image",
+                "key": "s",
+                "url": "./assets/input/keyboard_s.png"
+            },
+            {
+                "type": "image",
+                "key": "w",
+                "url": "./assets/input/keyboard_w.png"
+            },
+            {
+                "type": "image",
+                "key": "fire",
+                "url": "./assets/input/fire.png"
+            },
+            {
+                "type": "image",
+                "key": "move",
+                "url": "./assets/input/move.png"
+            },
+            {
+                "type": "image",
+                "key": "rotate",
+                "url": "./assets/input/rotate.png"
+            },
+            {
+                "type": "image",
                 "key": "over",
                 "url": "./assets/bg/over.png"
             },

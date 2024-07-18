@@ -123,16 +123,15 @@ export class Player extends Phaser.GameObjects.Container {
         this.moveBackwardKey = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.S)
 
         // Arrow keys
-        this.rotateKeyLeft = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT)
-        this.rotateKeyRight = this.scene.input.keyboard?.addKey(
-            Phaser.Input.Keyboard.KeyCodes.RIGHT
-        )
-        this.moveForwardKey = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.UP)
-        this.moveBackwardKey = this.scene.input.keyboard?.addKey(
-            Phaser.Input.Keyboard.KeyCodes.DOWN
-        )
     }
-
+    // this.rotateKeyLeft = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT)
+    // this.rotateKeyRight = this.scene.input.keyboard?.addKey(
+    //     Phaser.Input.Keyboard.KeyCodes.RIGHT
+    // )
+    // this.moveForwardKey = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.UP)
+    // this.moveBackwardKey = this.scene.input.keyboard?.addKey(
+    //     Phaser.Input.Keyboard.KeyCodes.DOWN
+    // )
     private initAnim(): void {
         const shootPos = this.getShootPos()
         this.flash = this.scene.add.sprite(shootPos.x, shootPos.y, 'flash1')
@@ -292,6 +291,7 @@ export class Player extends Phaser.GameObjects.Container {
         if (this.health <= 0) {
             this.health = 0
             Player.eventEmitter.emit(CONST.PLAYER.EVENTS.PLAYER_DIE)
+            this.moveSound.stop()
             this.active = false
         }
     }
