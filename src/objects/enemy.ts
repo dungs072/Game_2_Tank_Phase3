@@ -106,10 +106,8 @@ export class Enemy extends Phaser.GameObjects.Image {
             this.y
         )
 
-        // Define a maximum distance at which the sound is audible
         const maxDistance = 800
 
-        // Calculate the volume based on the distance
         const volume = Phaser.Math.Clamp(1 - distance / maxDistance, 0, 1)
 
         if (this.shootSound instanceof Phaser.Sound.WebAudioSound) {
@@ -156,5 +154,26 @@ export class Enemy extends Phaser.GameObjects.Image {
             this.active = false
             this.emit(CONST.ENEMEY.EVENTS.ENEMY_DIE, CONST.SCORE.SCORE_ADDED_AMOUNT)
         }
+        this.createDamageText(this.x + this.displayWidth / 2, this.y - this.displayHeight / 2)
+    }
+    private createDamageText(x: number, y: number) {
+        const text = this.scene.add.text(x, y, '-30', {
+            fontFamily: 'Arial',
+            color: '#FF1B00',
+            fontSize: 40,
+            fontStyle: 'bold',
+        })
+        this.scene.add.tween({
+            targets: text,
+            alpha: 0,
+            ease: 'Linear',
+            duration: 600,
+            repeat: 0,
+            yoyo: false,
+
+            onComplete: () => {
+                text.destroy()
+            },
+        })
     }
 }

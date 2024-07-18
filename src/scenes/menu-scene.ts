@@ -12,6 +12,7 @@ export class MenuScene extends Phaser.Scene {
     init(): void {}
 
     create(): void {
+        this.fadeIn()
         this.checkSounds()
         const background = this.add.image(0, 0, 'bg')
         background.setOrigin(0, 0)
@@ -29,5 +30,8 @@ export class MenuScene extends Phaser.Scene {
         if (soundManager instanceof SoundManager) {
             this.sound.mute = soundManager.getIsMute()
         }
+    }
+    private fadeIn() {
+        this.cameras.main.fadeIn(1000, 0, 0, 0)
     }
 }

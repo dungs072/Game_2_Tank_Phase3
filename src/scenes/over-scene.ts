@@ -12,8 +12,8 @@ class OverScene extends Phaser.Scene {
         this.checkSounds()
         this.fadeIn()
         this.overUI = new GameOverUI(this)
-        this.overUI.setCurrentScoreText('YOUR SCORE: ' + data.currentScore.toString())
-        this.overUI.setHighScoreText('HIGH SCORE: ' + data.highScore.toString())
+        this.overUI.setCurrentScore(data.currentScore)
+        this.overUI.setHighScore(data.highScore)
     }
     private fadeIn() {
         this.cameras.main.fadeIn(1000, 0, 0, 0)

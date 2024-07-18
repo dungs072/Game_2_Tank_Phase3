@@ -24,8 +24,8 @@ export class Player extends Phaser.GameObjects.Container {
     private trackLeft: Phaser.GameObjects.Image
     private trackRight: Phaser.GameObjects.Image
     private arrow: Phaser.GameObjects.Image
-
-    private collider: Phaser.Physics.Arcade.Image
+    private focus: Phaser.GameObjects.Image
+    private circleReloadTime: Phaser.GameObjects.Graphics
 
     // anim
     private flash: Phaser.GameObjects.Sprite
@@ -35,6 +35,9 @@ export class Player extends Phaser.GameObjects.Container {
     private rotateKeyRight: Phaser.Input.Keyboard.Key | undefined
     private moveBackwardKey: Phaser.Input.Keyboard.Key | undefined
     private moveForwardKey: Phaser.Input.Keyboard.Key | undefined
+
+    private canShoot: boolean = true
+    private currentTime: number = 0
 
     public getBullets(): Phaser.GameObjects.Group {
         return this.bullets
@@ -48,11 +51,6 @@ export class Player extends Phaser.GameObjects.Container {
 
         this.initInput()
         this.initSounds()
-
-        this.collider = new Phaser.Physics.Arcade.Image(this.scene, 0, 0, '')
-
-        this.collider.visible = false
-        this.add(this.collider)
 
         this.setTankScale(0.5)
         this.scene.add.existing(this)
@@ -100,6 +98,14 @@ export class Player extends Phaser.GameObjects.Container {
         this.barrel.setOrigin(0.5, 0.7)
         this.barrel.setDepth(2)
 
+        this.focus = this.scene.add.image(this.x, this.y, 'focus')
+        this.focus.setOrigin(0.5, 0.5)
+        this.focus.setDepth(5)
+        this.focus.setScale(0.09)
+        this.scene.add.existing(this.focus)
+
+        this.circleReloadTime = this.scene.add.graphics()
+
         //this.redrawLifebar()
         //this.add(this.lifeBar)
 
@@ -121,19 +127,9 @@ export class Player extends Phaser.GameObjects.Container {
         this.rotateKeyRight = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.D)
         this.moveForwardKey = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.W)
         this.moveBackwardKey = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.S)
-
-        // Arrow keys
     }
-    // this.rotateKeyLeft = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT)
-    // this.rotateKeyRight = this.scene.input.keyboard?.addKey(
-    //     Phaser.Input.Keyboard.KeyCodes.RIGHT
-    // )
-    // this.moveForwardKey = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.UP)
-    // this.moveBackwardKey = this.scene.input.keyboard?.addKey(
-    //     Phaser.Input.Keyboard.KeyCodes.DOWN
-    // )
     private initAnim(): void {
-        const shootPos = this.getShootPos()
+        const shootPos = this.getRotatePos()
         this.flash = this.scene.add.sprite(shootPos.x, shootPos.y, 'flash1')
         this.flash.setAngle(180)
         this.flash.setScale(1.4)
@@ -160,12 +156,25 @@ export class Player extends Phaser.GameObjects.Container {
         if (this.active) {
             this.handleInput(deltaTime)
             this.updateFlash()
-
+            this.updateUI(deltaTime)
             this.barrel.x = this.x
             this.barrel.y = this.y
         } else {
             this.destroy()
             this.barrel.destroy()
+        }
+    }
+    private updateUI(deltaTime: number): void {
+        if (!this.canShoot) {
+            this.circleReloadTime.setVisible(true)
+            this.currentTime += deltaTime
+            const progress = this.currentTime / (CONST.PLAYER.RELOAD_TIME / 1000)
+            this.drawCircleFill(progress, this.x + 75, this.y - 75)
+            if (this.currentTime >= CONST.PLAYER.RELOAD_TIME / 1000) {
+                this.canShoot = true
+                this.currentTime = 0
+                this.circleReloadTime.setVisible(false)
+            }
         }
     }
 
@@ -227,10 +236,23 @@ export class Player extends Phaser.GameObjects.Container {
         this.barrel.angle = Utils.normalizeAngle(
             this.barrel.angle + angleDifference * deltaTime * CONST.PLAYER.ROTATION_BARREL_SPEED
         )
+        const radius = Phaser.Math.Distance.Between(mouseX, mouseY, this.x, this.y)
+        const rotatePos = this.getRotatePos(radius)
+        this.focus.x = Phaser.Math.Linear(
+            this.focus.x,
+            rotatePos.x,
+            deltaTime * CONST.PLAYER.FOCUS_SPEED
+        )
+        this.focus.y = Phaser.Math.Linear(
+            this.focus.y,
+            rotatePos.y,
+            deltaTime * CONST.PLAYER.FOCUS_SPEED
+        )
     }
 
     private handleShooting(): void {
         if (this.scene.time.now - this.lastShoot < CONST.PLAYER.RELOAD_TIME) return
+
         this.scene.cameras.main.shake(20, 0.005)
         this.scene.tweens.add({
             targets: this,
@@ -245,7 +267,7 @@ export class Player extends Phaser.GameObjects.Container {
             yoyo: true,
             paused: false,
         })
-        const shootPos = this.getShootPos()
+        const shootPos = this.getRotatePos()
         if (this.bullets.getLength() < 10) {
             this.bullets.add(
                 new Bullet({
@@ -258,6 +280,7 @@ export class Player extends Phaser.GameObjects.Container {
             )
 
             this.lastShoot = this.scene.time.now
+            this.canShoot = false
         }
         this.scene.sound.play('shootsound')
         this.flash.play('flash')
@@ -265,21 +288,17 @@ export class Player extends Phaser.GameObjects.Container {
 
     private updateFlash(): void {
         if (!this.flash.visible) return
-        const shootPos = this.getShootPos()
+        const shootPos = this.getRotatePos()
         this.flash.x = shootPos.x
         this.flash.y = shootPos.y
         this.flash.rotation = this.barrel.rotation
     }
 
-    private getShootPos(): { x: number; y: number } {
+    private getRotatePos(radius = CONST.PLAYER.BARREL_RADIUS): { x: number; y: number } {
         const x =
-            Math.cos(this.barrel.rotation - Phaser.Math.DEG_TO_RAD * 90) *
-                CONST.PLAYER.BARREL_RADIUS +
-            this.barrel.x
+            Math.cos(this.barrel.rotation - Phaser.Math.DEG_TO_RAD * 90) * radius + this.barrel.x
         const y =
-            Math.sin(this.barrel.rotation - Phaser.Math.DEG_TO_RAD * 90) *
-                CONST.PLAYER.BARREL_RADIUS +
-            this.barrel.y
+            Math.sin(this.barrel.rotation - Phaser.Math.DEG_TO_RAD * 90) * radius + this.barrel.y
         return { x: x, y: y }
     }
 
@@ -294,9 +313,46 @@ export class Player extends Phaser.GameObjects.Container {
             this.moveSound.stop()
             this.active = false
         }
+        this.createDamageText(this.x + this.displayWidth, this.y - this.displayHeight)
+    }
+    private createDamageText(x: number, y: number) {
+        const text = this.scene.add.text(x, y, '-15', {
+            fontFamily: 'Arial',
+            color: '#FF1B00',
+            fontSize: 40,
+            fontStyle: 'bold',
+        })
+        this.scene.add.tween({
+            targets: text,
+            alpha: 0,
+            ease: 'Linear',
+            duration: 600,
+            repeat: 0,
+            yoyo: false,
+
+            onComplete: () => {
+                text.destroy()
+            },
+        })
     }
     private setTankScale(amount: number): void {
         this.setScale(amount)
         this.barrel.setScale(amount)
+    }
+    private drawCircleFill(progress: number, x: number, y: number) {
+        this.circleReloadTime.clear()
+
+        this.circleReloadTime.lineStyle(2, 0xffffff)
+        this.circleReloadTime.strokeCircle(x, y, 15)
+        this.circleReloadTime.fillStyle(0x63a29f, 1)
+        this.circleReloadTime.slice(
+            x,
+            y,
+            15,
+            Phaser.Math.DegToRad(270),
+            Phaser.Math.DegToRad(270 + 360 * progress),
+            false
+        )
+        this.circleReloadTime.fillPath()
     }
 }

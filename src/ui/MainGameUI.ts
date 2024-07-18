@@ -30,7 +30,7 @@ class MainGameUI extends Phaser.GameObjects.Container {
         })
     }
     private initText(): void {
-        this.score = this.scene.add.text(CONST.GAME.MAX_WIDTH * 0.75, 10, 'Score: 100', {
+        this.score = this.scene.add.text(CONST.GAME.MAX_WIDTH * 0.7, 10, 'Score: 100', {
             fontFamily: 'Arial',
             color: '#FFFFFF',
             fontSize: 40,

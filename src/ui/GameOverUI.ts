@@ -10,6 +10,12 @@ class GameOverUI extends Phaser.GameObjects.Container {
     private newGameButton: Button
     private highScoreText: Phaser.GameObjects.Text
     private currentScoreText: Phaser.GameObjects.Text
+    private currentHighScore = 0
+    private maxHighScore = 0
+    private currentScore = 0
+    private maxCurrentScore = 0
+    private highScoreTimer: Phaser.Time.TimerEvent
+    private currentScoreTimer: Phaser.Time.TimerEvent
     constructor(scene: Scene) {
         super(scene, 0, 0)
         this.initUI()
@@ -52,7 +58,7 @@ class GameOverUI extends Phaser.GameObjects.Container {
         this.add(this.pauseText)
         Phaser.Display.Align.In.Center(this.pauseText, this.pauseImage)
 
-        this.highScoreText = this.scene.add.text(0, -150, 'HIGH SCORE: 100000', {
+        this.highScoreText = this.scene.add.text(0, -150, 'HIGH SCORE: 0', {
             fontFamily: 'Arial',
             color: '#FFFFFF',
             fontSize: 45,
@@ -60,12 +66,13 @@ class GameOverUI extends Phaser.GameObjects.Container {
         })
         this.add(this.highScoreText)
         this.highScoreText.setOrigin(0.5, 0.5)
-        this.currentScoreText = this.scene.add.text(0, -20, 'YOUR SCORE: 999', {
+        this.currentScoreText = this.scene.add.text(0, -20, 'YOUR SCORE: 0', {
             fontFamily: 'Arial',
             color: '#FFFFFF',
             fontSize: 45,
             fontStyle: 'bold',
         })
+        this.currentScoreText.setOrigin(0.5, 0.5)
 
         this.add(this.currentScoreText)
 
@@ -150,6 +157,42 @@ class GameOverUI extends Phaser.GameObjects.Container {
     }
     public setCurrentScoreText(text: string): void {
         this.currentScoreText.text = text
+    }
+    public setHighScore(amount: number): void {
+        this.maxHighScore = amount
+        this.currentHighScore = 0
+        this.highScoreTimer = this.scene.time.addEvent({
+            delay: 10,
+            callback: this.updateHighScore,
+            callbackScope: this,
+            loop: true,
+        })
+    }
+    private updateHighScore() {
+        this.currentHighScore++
+        this.setHighScoreText('HIGH SCORE: ' + this.currentHighScore.toString())
+
+        if (this.currentHighScore >= this.maxHighScore) {
+            this.highScoreTimer.remove(false)
+        }
+    }
+    public setCurrentScore(amount: number): void {
+        this.maxCurrentScore = amount
+        this.currentScore = 0
+        this.currentScoreTimer = this.scene.time.addEvent({
+            delay: 10,
+            callback: this.updateCurrentScore,
+            callbackScope: this,
+            loop: true,
+        })
+    }
+    private updateCurrentScore() {
+        this.currentScore++
+        this.setCurrentScoreText('YOUR SCORE: ' + this.currentScore.toString())
+
+        if (this.currentScore >= this.maxCurrentScore) {
+            this.currentScoreTimer.remove(false)
+        }
     }
 }
 export default GameOverUI

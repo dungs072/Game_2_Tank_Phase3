@@ -9,6 +9,7 @@ let CONST = {
         ROTATION_SPEED: 1,
         MOVEMENT_SPEED: 100,
         BARREL_RADIUS: 100,
+        FOCUS_SPEED: 20,
         RELOAD_TIME: 1000,
 
         EVENTS: {
@@ -30,7 +31,7 @@ let CONST = {
         EVENTS: {
             SCORE_ADDED: 'scoreadded',
         },
-        SCORE_ADDED_AMOUNT: 1,
+        SCORE_ADDED_AMOUNT: 20,
     },
 }
 export default CONST

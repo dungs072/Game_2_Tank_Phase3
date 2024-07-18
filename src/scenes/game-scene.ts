@@ -233,7 +233,7 @@ export class GameScene extends Phaser.Scene {
         }
     }
 
-    private enemyBulletHitPlayer(bullet: any, player: any): void {
+    private enemyBulletHitPlayer(bullet: any, player: any) {
         if (bullet instanceof Bullet) {
             bullet.playExplosion()
             bullet.destroy()
