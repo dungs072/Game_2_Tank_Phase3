@@ -14,6 +14,11 @@
             },
             {
                 "type": "image",
+                "key": "focus",
+                "url": "./assets/crosshair/focus.png"
+            },
+            {
+                "type": "image",
                 "key": "a",
                 "url": "./assets/input/keyboard_a.png"
             },
